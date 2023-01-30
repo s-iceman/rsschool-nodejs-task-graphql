@@ -6,6 +6,7 @@ import {
   GraphQLFloat,
   GraphQLInt
 } from 'graphql';
+import { getMemberTypeById, getPostsByUserId, getProfileByUserId } from '../helpers/commands';
 
 
 const SubscribersType = new GraphQLList(GraphQLString);
@@ -35,19 +36,40 @@ const ProfileType = new GraphQLObjectType({
     city: { type: GraphQLString },
     memberTypeId: { type: GraphQLString },
     userId: { type: GraphQLString },
+    memberTypeInfo: {
+      type: MemberType,
+      resolve: async (obj, args, context) => {
+        return await getMemberTypeById(context, obj.memberTypeId);
+      } 
+    }
   }),
 });
 
 const ProfileListType = new GraphQLList(ProfileType);
 
 
-const ExtendedUserType = new GraphQLObjectType({
-  name: 'ExtendedUserType',
+const FullUserType: any = new GraphQLObjectType({
+  name: 'FullUserType',
   fields: () => ({
     userData: { type: UserType },
-    profiles: { type: ProfileListType },
-    posts: { type: PostListType },
-    memberTypes: { type: MemberListType }
+    profiles: {
+      type: ProfileListType,
+      resolve: async (obj, args, context) => {
+        return await getProfileByUserId(context, obj.userData.id);
+      }
+    },
+    posts: {
+      type: PostListType,
+      resolve: async (obj, args, context) => {
+        return await getPostsByUserId(context, obj.userData.id);
+      }
+    },
+    userSubscribedTo: {
+      type: new GraphQLList(UserType),
+      resolve: async (obj, args, context) => {
+        return obj.userSubscribedTo;
+      }
+    }
   }),
 });
 
@@ -76,12 +98,12 @@ const MemberListType = new GraphQLList(MemberType);
 
 export {
   UserType,
-  ExtendedUserType,
   UserListType,
   ProfileType,
   ProfileListType,
   PostType,
   PostListType,
   MemberType,
-  MemberListType
+  MemberListType,
+  FullUserType
 }

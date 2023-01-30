@@ -71,11 +71,18 @@ const getUserInfoById = async (fastify: FastifyInstance, id: string): Promise<Ex
   if (memberTypesIds) {
     memberTypes = await fastify.db.memberTypes.findMany({key: 'id', equalsAnyOf: memberTypesIds});
   }
+
+  const userSubscribedTo: UserEntity[] = await Promise.all(
+    user.subscribedToUserIds.map(async (id: any) => {
+      return await getUserById(fastify, id);
+    }));
+
   return {
     userData: user,
-    profiles: profiles,
-    posts: posts,
-    memberTypes: memberTypes,
+    profiles,
+    posts,
+    memberTypes,
+    userSubscribedTo
   };
 };
 

@@ -8,7 +8,7 @@ import {
   UserType, UserListType,
   MemberType, MemberListType,
   PostType, PostListType, 
-  ProfileType, ProfileListType, ExtendedUserType
+  ProfileType, ProfileListType, FullUserType
 } from './types';
 import {
   getUsers, getPosts, getProfiles, getMemberTypes,
@@ -22,32 +22,32 @@ const Query = new GraphQLObjectType({
   fields: {
     getUsers: {
       type: UserListType,
-      resolve: async (post, args, context) => {
+      resolve: async (obj, args, context) => {
         return await getUsers(context);
       }
     },
     getProfiles: {
       type: ProfileListType,
-      resolve: async (post, args, context) => {
+      resolve: async (obj, args, context) => {
         return await getProfiles(context);
       }
     },
     getPosts: {
       type: PostListType,
-      resolve: async (post, args, context) => {
+      resolve: async (obj, args, context) => {
         return await getPosts(context);
       }
     },
     getMemberTypes: {
       type: MemberListType,
-      resolve: async (post, args, context) => {
+      resolve: async (obj, args, context) => {
         return await getMemberTypes(context);
       }
     },
     getUserById: {
       type: UserType,
       args: { id: { type: GraphQLID } },
-      resolve: async (post, args, context) => {
+      resolve: async (obj, args, context) => {
         try {
           return await getUserById(context, args.id);
         } catch (err) {
@@ -58,7 +58,7 @@ const Query = new GraphQLObjectType({
     getPostById: {
       type: PostType,
       args: { id: { type: GraphQLID } },
-      resolve: async (post, args, context) => {
+      resolve: async (obj, args, context) => {
         try {
           return await getPostById(context, args.id);
         } catch (err) {
@@ -69,7 +69,7 @@ const Query = new GraphQLObjectType({
     getProfileById: {
       type: ProfileType,
       args: { id: { type: GraphQLID } },
-      resolve: async (post, args, context) => {
+      resolve: async (obj, args, context) => {
         try {
           return await getProfileById(context, args.id);
         } catch (err) {
@@ -80,7 +80,7 @@ const Query = new GraphQLObjectType({
     getMemberTypeById: {
       type: MemberType,
       args: { id: { type: GraphQLID } },
-      resolve: async (post, args, context) => {
+      resolve: async (obj, args, context) => {
         try {
           return await getMemberTypeById(context, args.id);
         } catch (err) {
@@ -89,8 +89,8 @@ const Query = new GraphQLObjectType({
       }
     },
     getAllUsersInfo: {
-      type: new GraphQLList(ExtendedUserType),
-      resolve: async (post, args, context) => {
+      type: new GraphQLList(FullUserType),
+      resolve: async (obj, args, context) => {
         const users = await getUsers(context);
         const res: any = [];
         for (const user of users) {
@@ -100,9 +100,9 @@ const Query = new GraphQLObjectType({
       }
     },
     getAllUserInfoById: {
-      type: ExtendedUserType,
+      type: FullUserType,
       args: { id: { type: GraphQLID } },
-      resolve: async (post, args, context) => {
+      resolve: async (obj, args, context) => {
         const id = args.id;
         return await getUserInfoById(context, id);
       }
