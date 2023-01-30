@@ -3,6 +3,7 @@ import { MemberTypeEntity } from '../../utils/DB/entities/DBMemberTypes';
 import { PostEntity } from '../../utils/DB/entities/DBPosts';
 import { ProfileEntity } from '../../utils/DB/entities/DBProfiles';
 import { UserEntity } from '../../utils/DB/entities/DBUsers';
+import { ExtendedUser } from './interfaces';
 
 
 const getUsers = async (fastify: FastifyInstance): Promise<UserEntity[]> => {
@@ -41,6 +42,14 @@ const getProfileById = async (fastify: FastifyInstance, id: any): Promise<Profil
   return res;
 }
 
+const getProfileByUserId = async (fastify: FastifyInstance, value: any): Promise<ProfileEntity[]> => {
+  return await fastify.db.profiles.findMany({key: 'userId', equals: value});
+}
+
+const getPostsByUserId = async (fastify: FastifyInstance, value: any): Promise<PostEntity[]> => {
+  return await fastify.db.posts.findMany({key: 'userId', equals: value});
+}
+
 const getMemberTypes = async (fastify: FastifyInstance): Promise<MemberTypeEntity[]> => {
   return await fastify.db.memberTypes.findMany();
 };
@@ -53,6 +62,23 @@ const getMemberTypeById = async (fastify: FastifyInstance, id: any): Promise<Mem
   return res;
 }
 
+const getUserInfoById = async (fastify: FastifyInstance, id: string): Promise<ExtendedUser | null> => {
+  const user = await getUserById(fastify, id);
+  const posts = await getPostsByUserId(fastify, user?.id);
+  const profiles = await getProfileByUserId(fastify, user?.id);
+  const memberTypesIds = profiles.map(p => p.memberTypeId);
+  let memberTypes: MemberTypeEntity[] = [];
+  if (memberTypesIds) {
+    memberTypes = await fastify.db.memberTypes.findMany({key: 'id', equalsAnyOf: memberTypesIds});
+  }
+  return {
+    userData: user,
+    profiles: profiles,
+    posts: posts,
+    memberTypes: memberTypes,
+  };
+};
+
 export {
   getUsers,
   getPosts,
@@ -62,4 +88,7 @@ export {
   getPostById,
   getProfileById,
   getMemberTypeById,
+  getUserInfoById,
+  getProfileByUserId,
+  getPostsByUserId,
 }

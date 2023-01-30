@@ -40,6 +40,17 @@ const ProfileType = new GraphQLObjectType({
 
 const ProfileListType = new GraphQLList(ProfileType);
 
+
+const ExtendedUserType = new GraphQLObjectType({
+  name: 'ExtendedUserType',
+  fields: () => ({
+    userData: { type: UserType },
+    profiles: { type: ProfileListType },
+    posts: { type: PostListType },
+    memberTypes: { type: MemberListType }
+  }),
+});
+
 const PostType = new GraphQLObjectType({
   name: 'Post',
   fields: () => ({
@@ -65,6 +76,7 @@ const MemberListType = new GraphQLList(MemberType);
 
 export {
   UserType,
+  ExtendedUserType,
   UserListType,
   ProfileType,
   ProfileListType,
