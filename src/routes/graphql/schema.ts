@@ -31,4 +31,5 @@ export const graphqlBodySchema = {
       additionalProperties: false,
     },
   ],
+  
 } as const;
