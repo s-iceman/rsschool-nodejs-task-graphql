@@ -1,8 +1,14 @@
 import {
+  GraphQLID,
   GraphQLObjectType,
   GraphQLSchema,
 } from 'graphql';
-import { MemberListType, PostListType, ProfileListType, UserListType } from './types';
+import { 
+  UserType, UserListType,
+  MemberType, MemberListType,
+  PostType, PostListType, 
+  ProfileType, ProfileListType
+} from './types';
 
 
 const Query = new GraphQLObjectType({
@@ -31,7 +37,35 @@ const Query = new GraphQLObjectType({
       resolve(post, args, context) {
         return context.db.memberTypes.findMany();
       }
-    }
+    },
+    user: {
+      type: UserType,
+      args: { id: { type: GraphQLID } },
+      resolve(post, args, context) {
+        return context.db.users.findOne({key: 'id', equals: args.id});
+      }
+    },
+    post: {
+      type: PostType,
+      args: { id: { type: GraphQLID } },
+      resolve(post, args, context) {
+        return context.db.posts.findOne({key: 'id', equals: args.id});
+      }
+    },
+    profile: {
+      type: ProfileType,
+      args: { id: { type: GraphQLID } },
+      resolve(post, args, context) {
+        return context.db.profiles.findOne({key: 'id', equals: args.id});
+      }
+    },
+    memberType: {
+      type: MemberType,
+      args: { id: { type: GraphQLID } },
+      resolve(post, args, context) {
+        return context.db.memberTypes.findOne({key: 'id', equals: args.id});
+      }
+    },
   }
 });
 

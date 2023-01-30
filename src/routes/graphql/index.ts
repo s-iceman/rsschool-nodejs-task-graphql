@@ -27,6 +27,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
         schema,
         source: String(request.body.query),
         contextValue: fastify,
+        variableValues: request.body.variables
       });
       console.log(`Result: ${JSON.stringify(res)}`);
       reply.send(res);

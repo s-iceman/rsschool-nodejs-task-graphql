@@ -8,7 +8,7 @@ import {
 } from 'graphql';
 
 
-const SybscribersType = new GraphQLList(GraphQLString);
+const SubscribersType = new GraphQLList(GraphQLString);
 
 const UserType = new GraphQLObjectType({
   name: 'User',
@@ -17,7 +17,7 @@ const UserType = new GraphQLObjectType({
     firstName: { type: GraphQLString },
     lastName: { type: GraphQLString },
     email: { type: GraphQLString },
-    subscribedToUserIds: { type: SybscribersType },
+    subscribedToUserIds: { type: SubscribersType },
   }),
 });
 
