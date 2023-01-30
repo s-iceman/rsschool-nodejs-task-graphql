@@ -74,12 +74,12 @@ const getUserInfoById = async (fastify: FastifyInstance, id: string): Promise<Ex
   }
   const allSubscribedUsers: String[] = (await getUsers(fastify)).filter(
     user => user.subscribedToUserIds.includes(id)).map(user => user.id);
-  const userSubscribedTo: UserEntity[] = await Promise.all(
+  const userSubscribedTo: any[] = await Promise.all(
     allSubscribedUsers.map(async (id: any) => {
-      return await getUserById(fastify, id);
+      return await getUserById(fastify, id)
     })
   );
-  const subscribedToUser: UserEntity[] = await Promise.all(
+  const subscribedToUser: any[] = await Promise.all(
     user.subscribedToUserIds.map(async (id: any) => {
       return await getUserById(fastify, id);
     }));

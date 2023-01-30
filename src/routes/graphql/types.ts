@@ -6,7 +6,8 @@ import {
   GraphQLFloat,
   GraphQLInt
 } from 'graphql';
-import { getMemberTypeById, getPostsByUserId, getProfileByUserId } from '../helpers/commands';
+import { UserEntity } from '../../utils/DB/entities/DBUsers';
+import { getMemberTypeById, getPostsByUserId, getProfileByUserId, getUserInfoById } from '../helpers/commands';
 
 
 const SubscribersType = new GraphQLList(GraphQLString);
@@ -65,15 +66,17 @@ const FullUserType: any = new GraphQLObjectType({
       }
     },
     userSubscribedTo: {
-      type: new GraphQLList(UserType),
+      type: new GraphQLList(FullUserType),
       resolve: async (obj, args, context) => {
-        return obj.userSubscribedTo;
+        return await Promise.all(obj.userSubscribedTo.map(
+          async (user: UserEntity) => await getUserInfoById(context, user.id)));
       }
     },
     subscribedToUser: {
-      type: new GraphQLList(UserType),
+      type: new GraphQLList(FullUserType),
       resolve: async (obj, args, context) => {
-        return obj.subscribedToUser;
+        return await Promise.all(obj.subscribedToUser.map(
+          async (user: UserEntity) => await getUserInfoById(context, user.id)));
       }
     }
   }),
