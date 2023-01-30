@@ -6,7 +6,8 @@ import {
   subscribeBodySchema,
 } from './schemas';
 import type { UserEntity } from '../../utils/DB/entities/DBUsers';
-import { validateUuid } from '../validators';
+import { validateUuid } from '../helpers/validators';
+import { getUsers, getUserById } from '../helpers/commands';
 
 const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
   fastify
@@ -14,7 +15,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
   fastify.get(
     '/',
     async function (request, reply): Promise<UserEntity[]> {
-      return await fastify.db.users.findMany();
+      return await getUsers(fastify);
     }
   );
 
@@ -30,11 +31,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       if (!userId) {
         throw fastify.httpErrors.badRequest();
       }
-      const res = await fastify.db.users.findOne({key: 'id', equals: userId});
-      if (!res) {
-        throw fastify.httpErrors.notFound();
-      }
-      return res;
+      return await getUserById(fastify, userId);
     }
   );
 
