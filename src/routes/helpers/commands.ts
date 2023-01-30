@@ -67,12 +67,19 @@ const getUserInfoById = async (fastify: FastifyInstance, id: string): Promise<Ex
   const posts = await getPostsByUserId(fastify, user?.id);
   const profiles = await getProfileByUserId(fastify, user?.id);
   const memberTypesIds = profiles.map(p => p.memberTypeId);
+
   let memberTypes: MemberTypeEntity[] = [];
   if (memberTypesIds) {
     memberTypes = await fastify.db.memberTypes.findMany({key: 'id', equalsAnyOf: memberTypesIds});
   }
-
+  const allSubscribedUsers: String[] = (await getUsers(fastify)).filter(
+    user => user.subscribedToUserIds.includes(id)).map(user => user.id);
   const userSubscribedTo: UserEntity[] = await Promise.all(
+    allSubscribedUsers.map(async (id: any) => {
+      return await getUserById(fastify, id);
+    })
+  );
+  const subscribedToUser: UserEntity[] = await Promise.all(
     user.subscribedToUserIds.map(async (id: any) => {
       return await getUserById(fastify, id);
     }));
@@ -82,7 +89,8 @@ const getUserInfoById = async (fastify: FastifyInstance, id: string): Promise<Ex
     profiles,
     posts,
     memberTypes,
-    userSubscribedTo
+    userSubscribedTo,
+    subscribedToUser
   };
 };
 

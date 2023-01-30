@@ -94,8 +94,10 @@ const Query = new GraphQLObjectType({
         const users = await getUsers(context);
         const res: any = [];
         for (const user of users) {
+          console.log(user.id, user.firstName);
           res.push(await getUserInfoById(context, user.id));
         }
+        console.log(JSON.stringify(res));
         return res;
       }
     },

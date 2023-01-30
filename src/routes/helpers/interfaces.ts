@@ -10,6 +10,7 @@ interface ExtendedUser {
   posts: PostEntity[];
   memberTypes: MemberTypeEntity[];
   userSubscribedTo: UserEntity[];
+  subscribedToUser: UserEntity[];
 };
 
 export {

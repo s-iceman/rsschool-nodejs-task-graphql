@@ -69,6 +69,12 @@ const FullUserType: any = new GraphQLObjectType({
       resolve: async (obj, args, context) => {
         return obj.userSubscribedTo;
       }
+    },
+    subscribedToUser: {
+      type: new GraphQLList(UserType),
+      resolve: async (obj, args, context) => {
+        return obj.subscribedToUser;
+      }
     }
   }),
 });
